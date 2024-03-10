@@ -2,6 +2,8 @@ package database
 
 import (
 	"database/sql"
+	"errors"
+	"fmt"
 
 	"github.com/google/uuid"
 )
@@ -18,10 +20,21 @@ func NewCategory(db *sql.DB) *Category {
 }
 
 func (c *Category) Create(name string, description string) (Category, error) {
+	if name == "" {
+		return Category{}, errors.New("name is required")
+	}
 	id := uuid.New().String()
-	_, err := c.db.Exec("INSERT INTO categories (id, name, description) VALUES ($1, $2, $3)", id, name, description)
+
+	stmt, err := c.db.Prepare("INSERT INTO categories (id, name, description) VALUES ($1, $2, $3)")
+
 	if err != nil {
-		return Category{}, err
+		return Category{}, fmt.Errorf("error preparing statement: %w", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id, name, description)
+	if err != nil {
+		return Category{}, fmt.Errorf("error executing statement: %w", err)
 	}
 	return Category{ID: id, Name: name, Description: description}, nil
 }

@@ -31,7 +31,7 @@ func (r *mutationResolver) CreateCourse(ctx context.Context, input model.NewCour
 
 // Categories is the resolver for the categories field.
 func (r *queryResolver) Categories(ctx context.Context) ([]*model.Category, error) {
-	categories, err := r.CategoryDB.List()
+	categories, err := r.CategoryDB.FindAll()
 	if err != nil {
 		return nil, err
 	}

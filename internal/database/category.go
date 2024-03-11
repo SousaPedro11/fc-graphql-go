@@ -39,7 +39,7 @@ func (c *Category) Create(name string, description string) (Category, error) {
 	return Category{ID: id, Name: name, Description: description}, nil
 }
 
-func (c *Category) List() ([]Category, error) {
+func (c *Category) FindAll() ([]Category, error) {
 	rows, err := c.db.Query("SELECT id, name, description FROM categories")
 	if err != nil {
 		return nil, fmt.Errorf("error querying categories: %w", err)
